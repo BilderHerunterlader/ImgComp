@@ -6,8 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javax.swing.UIManager;
-
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
@@ -56,12 +54,6 @@ public class ImgComp {
 				}
 
 				if (cmd.getOptions().length == 0 && cmd.getArgList().isEmpty()) {
-					try {
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception e) {
-						logger.error("Could not set SystemLookAndFeel", e);
-					}
-
 					MainWindow mainWindow = new MainWindow(GuiMode.NORMAL, SearchMode.NORMAL_SEARCH);
 					mainWindow.setVisible(true);
 					return;
@@ -99,12 +91,6 @@ public class ImgComp {
 				ProgressObserver progress = new ProgressObserver();
 				MainWindow mainWindow = null;
 				if (gui) {
-					try {
-						UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					} catch (Exception e) {
-						logger.error("Could not set SystemLookAndFeel", e);
-					}
-
 					mainWindow = new MainWindow(hashMode ? GuiMode.CLI_HASH : GuiMode.CLI_COMP, searchMode);
 					progress.addProgressListener(mainWindow);
 					mainWindow.setVisible(true);
