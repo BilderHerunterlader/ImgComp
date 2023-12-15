@@ -1,8 +1,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+		<groupId>com.github.bilderherunterlader</groupId>
+		<artifactId>supertomcatroot</artifactId>
+		<version>1.0.0</version>
+	</parent>
+	
 	<groupId>ch.supertomcat</groupId>
 	<artifactId>imgcomp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<name>ImgComp</name>
+	<description>Compare images</description>
+	<url>https://github.com/BilderHerunterlader/ImgComp.git</url>
 	<properties>
 		<mainClass>ch.supertomcat.imgcomp.ImgComp</mainClass>
 		<executableJarPath>${project.basedir}</executableJarPath>
@@ -10,49 +20,41 @@
 		<!-- Jar Filename -->
 		<jar.finalName>ImgComp</jar.finalName>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
-			<version>2.0.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
-			<version>2.22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-api</artifactId>
-			<version>2.22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-slf4j2-impl</artifactId>
-			<version>2.22.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.github.bilderherunterlader</groupId>
 			<artifactId>supertomcatutils</artifactId>
-			<version>1.0.23</version>
+			<version>1.0.24</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-cli</groupId>
 			<artifactId>commons-cli</artifactId>
-			<version>1.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-engine</artifactId>
-			<version>5.10.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.jupiter</groupId>
 			<artifactId>junit-jupiter-params</artifactId>
-			<version>5.10.1</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
@@ -60,17 +62,12 @@
 		<finalName>${jar.finalName}</finalName>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.11.0</version>
-				<configuration>
-					<source>11</source>
-					<target>11</target>
-				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>3.3.0</version>
 				<configuration>
 					<archive>
 						<manifest>
@@ -90,7 +87,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.3.2</version>
 				<executions>
 					<execution>
 						<id>clean-lib-dir</id>
@@ -115,7 +111,6 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
-				<version>3.6.1</version>
 				<executions>
 					<execution>
 						<id>copy-dependencies</id>
@@ -135,24 +130,15 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
-				<version>3.2.2</version>
-				<configuration>
-					<excludes>
-						<exclude>**/manualtest/**</exclude>
-					</excludes>
-				</configuration>
 			</plugin>
 		</plugins>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-release-plugin</artifactId>
-					<version>3.0.1</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
+	<scm>
+		<url>https://github.com/BilderHerunterlader/ImgComp.git</url>
+		<connection>scm:git:https://github.com/BilderHerunterlader/ImgComp.git</connection>
+		<developerConnection>scm:git:https://github.com/BilderHerunterlader/ImgComp.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
 	<distributionManagement>
 		<repository>
 			<id>bilderuploader-maven-repo</id>
