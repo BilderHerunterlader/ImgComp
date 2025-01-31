@@ -64,7 +64,7 @@ public class ImgComp {
 
 				boolean hashMode = cmd.hasOption("hash");
 				boolean recursive = cmd.hasOption("R");
-				String filter = cmd.getOptionValue("filter", null);
+				String filter = cmd.getOptionValue("filter", (String)null);
 
 				boolean compMode = cmd.hasOption("comp");
 				boolean reverse = cmd.hasOption("reverse");
