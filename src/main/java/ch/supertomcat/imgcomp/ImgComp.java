@@ -1,6 +1,7 @@
 package ch.supertomcat.imgcomp;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,10 +10,10 @@ import java.util.stream.Collectors;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.help.HelpFormatter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,7 +185,7 @@ public class ImgComp {
 		Option recursiveOption = new Option("R", "recursive", false, "Recursive (Only with -hash or -sort)");
 		options.addOption(recursiveOption);
 
-		Option filterOption = Option.builder("filter").argName("filter").hasArg().desc("Filter for filenames").build();
+		Option filterOption = Option.builder("filter").argName("filter").hasArg().desc("Filter for filenames").get();
 		options.addOption(filterOption);
 
 		/*
@@ -206,7 +207,7 @@ public class ImgComp {
 		options.addOption(foldersOnlyOption);
 
 		String searchModeCommandLineNames = Arrays.stream(SearchMode.values()).map(x -> x.getCommandLineName()).collect(Collectors.joining(", "));
-		Option searchModeOption = Option.builder("searchMode").argName("searchMode").hasArg().desc("Search Mode (Avaible modes: " + searchModeCommandLineNames + ")").build();
+		Option searchModeOption = Option.builder("searchMode").argName("searchMode").hasArg().desc("Search Mode (Avaible modes: " + searchModeCommandLineNames + ")").get();
 		options.addOption(searchModeOption);
 
 		/*
@@ -227,7 +228,12 @@ public class ImgComp {
 	 * @param options Command Line Options
 	 */
 	private static void printHelp(Options options) {
-		HelpFormatter helpFormatter = new HelpFormatter();
-		helpFormatter.printHelp(ApplicationProperties.getProperty("ApplicationName") + " " + ApplicationProperties.getProperty("ApplicationVersion"), options);
+		try {
+			HelpFormatter helpFormatter = HelpFormatter.builder().get();
+			helpFormatter.printHelp(ApplicationProperties.getProperty("ApplicationName") + " " + ApplicationProperties.getProperty("ApplicationVersion"), "", options, "", false);
+		} catch (IOException e) {
+			Logger logger = LoggerFactory.getLogger(ImgComp.class);
+			logger.error("Could not print help", e);
+		}
 	}
 }
