@@ -105,7 +105,7 @@ public class HashModePanel extends ModePanelBase {
 				}
 			}
 		});
-		thread.setName("Hash-Thread-" + thread.getId());
+		thread.setName("Hash-Thread-" + thread.threadId());
 		thread.start();
 	}
 }

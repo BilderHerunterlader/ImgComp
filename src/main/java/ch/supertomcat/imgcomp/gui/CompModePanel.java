@@ -87,7 +87,7 @@ public class CompModePanel extends ModePanelBase {
 				}
 			}
 		});
-		thread.setName("Comp-Thread-" + thread.getId());
+		thread.setName("Comp-Thread-" + thread.threadId());
 		thread.start();
 	}
 }
