@@ -10,6 +10,7 @@ import javax.swing.JLabel;
 import javax.swing.JTabbedPane;
 
 import ch.supertomcat.imgcomp.comparator.SearchMode;
+import ch.supertomcat.supertomcatutils.application.ApplicationMain;
 import ch.supertomcat.supertomcatutils.application.ApplicationProperties;
 import ch.supertomcat.supertomcatutils.gui.PositionUtil;
 import ch.supertomcat.supertomcatutils.gui.progress.IProgressObserver;
@@ -47,7 +48,7 @@ public class MainWindow extends JFrame implements IProgressObserver {
 	 * @param defaultSearchMode Default Search Mode
 	 */
 	public MainWindow(GuiMode guiMode, SearchMode defaultSearchMode) {
-		super(ApplicationProperties.getProperty("ApplicationName") + " (" + ApplicationProperties.getProperty("ApplicationVersion") + ")");
+		super(ApplicationProperties.getProperty(ApplicationMain.APPLICATION_NAME) + " (" + ApplicationProperties.getProperty(ApplicationMain.APPLICATION_VERSION) + ")");
 		if (guiMode == GuiMode.NORMAL) {
 			setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		} else {
