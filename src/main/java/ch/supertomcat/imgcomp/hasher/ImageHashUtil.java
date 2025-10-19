@@ -10,7 +10,6 @@ import java.awt.image.DataBufferShort;
 import java.awt.image.DataBufferUShort;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -20,6 +19,7 @@ import java.io.OutputStreamWriter;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -69,21 +69,21 @@ public final class ImageHashUtil {
 	 * @param f
 	 * @return Hash
 	 */
-	public static synchronized String getImageHash(File f) {
+	public static synchronized String getImageHash(Path f) {
 		try {
-			BufferedImage img = ImageIO.read(f);
+			BufferedImage img = ImageIO.read(f.toFile());
 			if (img == null) {
-				logger.error("{} is not an Image", f.getAbsolutePath());
+				logger.error("{} is not an Image", f.toAbsolutePath());
 				return "";
 			} else {
 				// Calculate hash of raw image data, without any file headers
 				byte[] data = null;
 
 				DataBuffer dataBuffer = img.getData().getDataBuffer();
-				if (dataBuffer instanceof DataBufferByte) {
-					data = ((DataBufferByte)dataBuffer).getData();
-				} else if (dataBuffer instanceof DataBufferDouble) {
-					double[] doubleData = ((DataBufferDouble)dataBuffer).getData();
+				if (dataBuffer instanceof DataBufferByte dataBufferByte) {
+					data = dataBufferByte.getData();
+				} else if (dataBuffer instanceof DataBufferDouble dataBufferDouble) {
+					double[] doubleData = dataBufferDouble.getData();
 					Function<ByteBuffer, Void> putValuesFunction = buffer -> {
 						for (double value : doubleData) {
 							buffer.putDouble(value);
@@ -91,8 +91,8 @@ public final class ImageHashUtil {
 						return null;
 					};
 					data = converToByteArray(doubleData.length, 8, putValuesFunction);
-				} else if (dataBuffer instanceof DataBufferFloat) {
-					float[] floatData = ((DataBufferFloat)dataBuffer).getData();
+				} else if (dataBuffer instanceof DataBufferFloat dataBufferFloat) {
+					float[] floatData = dataBufferFloat.getData();
 					Function<ByteBuffer, Void> putValuesFunction = buffer -> {
 						for (float value : floatData) {
 							buffer.putFloat(value);
@@ -100,8 +100,8 @@ public final class ImageHashUtil {
 						return null;
 					};
 					data = converToByteArray(floatData.length, 4, putValuesFunction);
-				} else if (dataBuffer instanceof DataBufferInt) {
-					int[] intData = ((DataBufferInt)dataBuffer).getData();
+				} else if (dataBuffer instanceof DataBufferInt dataBufferInt) {
+					int[] intData = dataBufferInt.getData();
 					Function<ByteBuffer, Void> putValuesFunction = buffer -> {
 						for (int value : intData) {
 							buffer.putInt(value);
@@ -109,8 +109,8 @@ public final class ImageHashUtil {
 						return null;
 					};
 					data = converToByteArray(intData.length, 4, putValuesFunction);
-				} else if (dataBuffer instanceof DataBufferShort) {
-					short[] shortData = ((DataBufferShort)dataBuffer).getData();
+				} else if (dataBuffer instanceof DataBufferShort dataBufferShort) {
+					short[] shortData = dataBufferShort.getData();
 					Function<ByteBuffer, Void> putValuesFunction = buffer -> {
 						for (short value : shortData) {
 							buffer.putShort(value);
@@ -118,8 +118,8 @@ public final class ImageHashUtil {
 						return null;
 					};
 					data = converToByteArray(shortData.length, 2, putValuesFunction);
-				} else if (dataBuffer instanceof DataBufferUShort) {
-					short[] shortData = ((DataBufferUShort)dataBuffer).getData();
+				} else if (dataBuffer instanceof DataBufferUShort dataBufferUShort) {
+					short[] shortData = dataBufferUShort.getData();
 					Function<ByteBuffer, Void> putValuesFunction = buffer -> {
 						for (short value : shortData) {
 							buffer.putShort(value);
@@ -143,7 +143,7 @@ public final class ImageHashUtil {
 				return sb.toString();
 			}
 		} catch (Exception e) {
-			logger.error("Could not generate hash for file: {}", f.getAbsolutePath(), e);
+			logger.error("Could not generate hash for file: {}", f, e);
 			return "";
 		}
 	}

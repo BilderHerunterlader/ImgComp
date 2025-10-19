@@ -2,9 +2,10 @@ package ch.supertomcat.imgcomp.gui;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ch.supertomcat.imgcomp.comparator.HashComparatorTask;
 import ch.supertomcat.imgcomp.comparator.SearchMode;
@@ -34,8 +35,8 @@ public class CompModePanel extends ModePanelBase {
 	}
 
 	@Override
-	protected List<File> selectFilesToDrop(List<File> droppedFiles) {
-		return droppedFiles.stream().filter(File::isFile).collect(Collectors.toList());
+	protected List<Path> selectFilesToDrop(List<File> droppedFiles) {
+		return droppedFiles.stream().map(File::toPath).filter(Files::isRegularFile).toList();
 	}
 
 	@Override
@@ -44,7 +45,7 @@ public class CompModePanel extends ModePanelBase {
 
 		final List<ImageHashList> imageHashLists = new ArrayList<>();
 		for (int i = 0; i < listModel.size(); i++) {
-			String imageHashListFile = listModel.get(i).getAbsolutePath();
+			String imageHashListFile = listModel.get(i).toAbsolutePath().toString();
 			ImageHashList imageHashList = ImageHashUtil.readHashList(imageHashListFile);
 			imageHashLists.add(imageHashList);
 		}

@@ -13,6 +13,7 @@ import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -29,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import ch.supertomcat.imgcomp.comparator.Duplicate;
 import ch.supertomcat.imgcomp.comparator.SearchMode;
-import ch.supertomcat.imgcomp.gui.renderer.FileCellRenderer;
 import ch.supertomcat.imgcomp.task.ImgCompTask;
+import ch.supertomcat.supertomcatutils.gui.list.renderer.FileCellRenderer;
 import ch.supertomcat.supertomcatutils.gui.progress.IProgressObserver;
 
 /**
@@ -47,12 +48,12 @@ public abstract class ModePanelBase extends JPanel implements IProgressObserver 
 	/**
 	 * List Model
 	 */
-	protected final DefaultListModel<File> listModel = new DefaultListModel<>();
+	protected final DefaultListModel<Path> listModel = new DefaultListModel<>();
 
 	/**
 	 * List
 	 */
-	protected final JList<File> list = new JList<>(listModel);
+	protected final JList<Path> list = new JList<>(listModel);
 
 	/**
 	 * Panel containing the list
@@ -147,11 +148,11 @@ public abstract class ModePanelBase extends JPanel implements IProgressObserver 
 		btnAdd.addActionListener(e -> {
 			File file = selectFileToAdd();
 			if (file != null) {
-				listModel.addElement(file);
+				listModel.addElement(file.toPath());
 			}
 		});
 		btnRemove.addActionListener(e -> {
-			int indices[] = list.getSelectedIndices();
+			int[] indices = list.getSelectedIndices();
 			for (int i = indices.length - 1; i >= 0; i--) {
 				listModel.remove(indices[i]);
 			}
@@ -206,8 +207,8 @@ public abstract class ModePanelBase extends JPanel implements IProgressObserver 
 					@SuppressWarnings("unchecked")
 					List<File> files = (List<File>)dtde.getTransferable().getTransferData(DataFlavor.javaFileListFlavor);
 
-					List<File> selectedFiles = selectFilesToDrop(files);
-					for (File file : selectedFiles) {
+					List<Path> selectedFiles = selectFilesToDrop(files);
+					for (Path file : selectedFiles) {
 						listModel.addElement(file);
 					}
 
@@ -242,7 +243,7 @@ public abstract class ModePanelBase extends JPanel implements IProgressObserver 
 	 * @param droppedFiles Files which were originally dropped
 	 * @return Files to add to list
 	 */
-	protected abstract List<File> selectFilesToDrop(List<File> droppedFiles);
+	protected abstract List<Path> selectFilesToDrop(List<File> droppedFiles);
 
 	/**
 	 * Run Method, which is called, when Run Button is pressed
@@ -315,7 +316,7 @@ public abstract class ModePanelBase extends JPanel implements IProgressObserver 
 	 * 
 	 * @param file File
 	 */
-	public void addInputFile(File file) {
+	public void addInputFile(Path file) {
 		listModel.addElement(file);
 	}
 

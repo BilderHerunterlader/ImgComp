@@ -1,9 +1,13 @@
 package ch.supertomcat.imgcomp.hasher;
 
-import java.io.File;
-import java.io.FileFilter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,20 +22,7 @@ public class HashTask extends ImgCompTaskBase {
 	/**
 	 * DEFAULT_FILENAME_PATTERN
 	 */
-	public static final String DEFAULT_FILENAME_PATTERN = ".*\\.(?:jpg|jpeg|gif|png|bak|bak1|bak2|bak3)$";
-
-	/**
-	 * Folder Filter
-	 */
-	private static final FileFilter FOLDER_FILTER = new FileFilter() {
-		@Override
-		public boolean accept(File pathname) {
-			if (pathname.isDirectory()) {
-				return true;
-			}
-			return false;
-		}
-	};
+	public static final String DEFAULT_FILENAME_PATTERN = "(?i).*\\.(?:jpg|jpeg|gif|png|bak|bak1|bak2|bak3)$";
 
 	/**
 	 * Logger
@@ -76,37 +67,16 @@ public class HashTask extends ImgCompTaskBase {
 	 */
 	public void generateHashes(ImageHashList imageHashList) {
 		String rootPath = imageHashList.getFolder();
-		if (rootPath.isEmpty()) {
-			// TODO Make this linux compatible
-			rootPath = ".\\";
-		} else {
-			// TODO Make this linux compatible
-			if (!rootPath.endsWith("\\")) {
-				rootPath += "\\";
-			}
-		}
+		Path rootFolder = Paths.get(rootPath);
 
-		File rootFolder = new File(rootPath);
-		if (!rootFolder.exists()) {
+		if (!Files.exists(rootFolder)) {
 			logger.error("Folder does not exist: {}", rootPath);
 			return;
 		}
 
 		// TODO CASE_INSENSITIVE flag really necessary?, could also be configured in pattern
-		FileFilter fileFilter = new FileFilter() {
-			/**
-			 * File Pattern
-			 */
-			private Pattern filePattern = Pattern.compile(imageHashList.getFilenamePattern(), Pattern.CASE_INSENSITIVE);
-
-			@Override
-			public boolean accept(File pathname) {
-				if (pathname.isFile()) {
-					return filePattern.matcher(pathname.getName()).matches();
-				}
-				return false;
-			}
-		};
+		final Pattern filePattern = Pattern.compile(imageHashList.getFilenamePattern(), Pattern.CASE_INSENSITIVE);
+		Predicate<Path> fileFilter = x -> filePattern.matcher(x.getFileName().toString()).matches();
 
 		generateImageHashes(rootFolder, fileFilter, imageHashList.isRecursive(), imageHashList.getHashes());
 	}
@@ -119,38 +89,30 @@ public class HashTask extends ImgCompTaskBase {
 	 * @param recursive True if recursive, false otherwise
 	 * @param hashes List of Hashes
 	 */
-	private void generateImageHashes(File folder, FileFilter fileFilter, boolean recursive, List<Hash> hashes) {
-		File[] files = folder.listFiles(fileFilter);
-		if (files == null) {
+	private void generateImageHashes(Path folder, Predicate<Path> fileFilter, boolean recursive, List<Hash> hashes) {
+		List<Path> files;
+		try (@SuppressWarnings("resource")
+		Stream<Path> stream = recursive ? Files.walk(folder) : Files.list(folder)) {
+			files = stream.filter(Files::isRegularFile).filter(fileFilter).toList();
+		} catch (IOException e) {
+			logger.error("Could not list files: {}", folder, e);
 			return;
 		}
 
-		progress.progressChanged(folder.getAbsolutePath() + " (" + files.length + "x)");
+		progress.progressChanged(folder.toAbsolutePath() + " (" + files.size() + "x)");
 		progress.progressModeChanged(false);
-		progress.progressChanged(0, files.length, 0);
+		progress.progressChanged(0, files.size(), 0);
 
-		for (File file : files) {
+		for (Path file : files) {
 			if (stop) {
 				return;
 			}
 
 			String hash = ImageHashUtil.getImageHash(file);
-			if (hash.length() > 0) {
-				hashes.add(new Hash(file.getAbsolutePath(), hash));
+			if (!hash.isEmpty()) {
+				hashes.add(new Hash(file.toAbsolutePath().toString(), hash));
 			}
 			progress.progressIncreased();
-		}
-
-		if (recursive) {
-			File[] subFolders = folder.listFiles(FOLDER_FILTER);
-			if (subFolders != null) {
-				for (File subFolder : subFolders) {
-					if (stop) {
-						break;
-					}
-					generateImageHashes(subFolder, fileFilter, recursive, hashes);
-				}
-			}
 		}
 	}
 }

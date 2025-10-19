@@ -3,7 +3,7 @@ package ch.supertomcat.imgcomp.gui;
 import java.awt.BorderLayout;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.File;
+import java.nio.file.Path;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -97,7 +97,7 @@ public class MainWindow extends JFrame implements IProgressObserver {
 	 * 
 	 * @param file File
 	 */
-	public void addInputFile(File file) {
+	public void addInputFile(Path file) {
 		pnlHashMode.addInputFile(file);
 		pnlCompMode.addInputFile(file);
 	}

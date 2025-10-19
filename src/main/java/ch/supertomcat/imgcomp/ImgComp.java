@@ -1,7 +1,7 @@
 package ch.supertomcat.imgcomp;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -101,9 +101,9 @@ public class ImgComp {
 					String filePattern = prepareFilePattern(filter);
 					if (filePattern.isEmpty()) {
 						filePattern = HashTask.DEFAULT_FILENAME_PATTERN;
-						logger.info("No FilePattern detected, using default: " + filePattern);
+						logger.info("No FilePattern detected, using default: {}", filePattern);
 					} else {
-						logger.info("FilePattern detected: " + filePattern);
+						logger.info("FilePattern detected: {}", filePattern);
 					}
 
 					List<ImageHashList> imageHashLists = new ArrayList<>();
@@ -115,10 +115,10 @@ public class ImgComp {
 
 						ImageHashList imageHashList = new ImageHashList(inputFolder, filePattern, recursive);
 						imageHashLists.add(imageHashList);
-						logger.info("Path detected: " + imageHashList.getFolder());
+						logger.info("Path detected: {}", imageHashList.getFolder());
 
 						if (mainWindow != null) {
-							mainWindow.addInputFile(new File(inputFolder));
+							mainWindow.addInputFile(Paths.get(inputFolder));
 						}
 					}
 
@@ -130,10 +130,10 @@ public class ImgComp {
 					for (String inputFile : remainingArguments) {
 						ImageHashList imageHashList = ImageHashUtil.readHashList(inputFile);
 						imageHashLists.add(imageHashList);
-						logger.info("HashList detected: " + imageHashList.getFolder());
+						logger.info("HashList detected: {}", imageHashList.getFolder());
 
 						if (mainWindow != null) {
-							mainWindow.addInputFile(new File(inputFile));
+							mainWindow.addInputFile(Paths.get(inputFile));
 						}
 					}
 
@@ -230,7 +230,8 @@ public class ImgComp {
 	private static void printHelp(Options options) {
 		try {
 			HelpFormatter helpFormatter = HelpFormatter.builder().get();
-			helpFormatter.printHelp(ApplicationProperties.getProperty(ApplicationMain.APPLICATION_NAME) + " " + ApplicationProperties.getProperty(ApplicationMain.APPLICATION_VERSION), "", options, "", false);
+			helpFormatter.printHelp(ApplicationProperties.getProperty(ApplicationMain.APPLICATION_NAME) + " "
+					+ ApplicationProperties.getProperty(ApplicationMain.APPLICATION_VERSION), "", options, "", false);
 		} catch (IOException e) {
 			Logger logger = LoggerFactory.getLogger(ImgComp.class);
 			logger.error("Could not print help", e);

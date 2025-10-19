@@ -2,9 +2,10 @@ package ch.supertomcat.imgcomp.gui;
 
 import java.awt.EventQueue;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import ch.supertomcat.imgcomp.comparator.HashComparatorTask;
 import ch.supertomcat.imgcomp.comparator.SearchMode;
@@ -35,8 +36,8 @@ public class HashModePanel extends ModePanelBase {
 	}
 
 	@Override
-	protected List<File> selectFilesToDrop(List<File> droppedFiles) {
-		return droppedFiles.stream().filter(File::isDirectory).collect(Collectors.toList());
+	protected List<Path> selectFilesToDrop(List<File> droppedFiles) {
+		return droppedFiles.stream().map(File::toPath).filter(Files::isDirectory).toList();
 	}
 
 	@Override
@@ -48,7 +49,7 @@ public class HashModePanel extends ModePanelBase {
 
 		final List<ImageHashList> imageHashLists = new ArrayList<>();
 		for (int i = 0; i < listModel.size(); i++) {
-			String folder = listModel.get(i).getAbsolutePath();
+			String folder = listModel.get(i).toAbsolutePath().toString();
 			if (!folder.endsWith("\\") && !folder.endsWith("/")) {
 				folder += FileUtil.FILE_SEPERATOR;
 			}
