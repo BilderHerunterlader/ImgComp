@@ -4,7 +4,7 @@
 	<parent>
 		<groupId>com.github.bilderherunterlader</groupId>
 		<artifactId>supertomcatroot</artifactId>
-		<version>1.1.4</version>
+		<version>1.1.5</version>
 	</parent>
 	
 	<groupId>ch.supertomcat</groupId>
@@ -15,10 +15,7 @@
 	<url>https://github.com/BilderHerunterlader/ImgComp.git</url>
 	<properties>
 		<mainClass>ch.supertomcat.imgcomp.ImgComp</mainClass>
-		<executableJarPath>${project.basedir}</executableJarPath>
 		<libsPath>${project.basedir}/lib</libsPath>
-		<!-- Jar Filename -->
-		<jar.finalName>ImgComp</jar.finalName>
 		<maven.javadoc.skip>true</maven.javadoc.skip>
 	</properties>
 	<dependencies>
@@ -59,7 +56,6 @@
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>${jar.finalName}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -76,8 +72,6 @@
 							<Built-By>${project.name}</Built-By>
 						</manifestEntries>
 					</archive>
-					<outputDirectory>${executableJarPath}</outputDirectory>
-					<finalName>${jar.finalName}</finalName>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -108,6 +102,26 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
+					<execution>
+						<id>copy-project-jar</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy</goal>
+						</goals>
+						<configuration>
+							<artifactItems>
+								<artifactItem>
+									<groupId>${project.groupId}</groupId>
+									<artifactId>${project.artifactId}</artifactId>
+									<version>${project.version}</version>
+									<type>jar</type>
+									<outputDirectory>${project.basedir}</outputDirectory>
+									<destFileName>ImgComp.jar</destFileName>
+								</artifactItem>
+							</artifactItems>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
 					<execution>
 						<id>copy-dependencies</id>
 						<phase>prepare-package</phase>
